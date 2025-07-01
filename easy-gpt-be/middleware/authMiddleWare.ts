@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../config/openaiConfig";
+import { appConfig } from "../config/app.config";
 
 export function authMiddleWare(req: any, res: any, next: any) {
   const token = req.headers.authorization?.split(" ")[1];
@@ -8,7 +8,7 @@ export function authMiddleWare(req: any, res: any, next: any) {
   }
 
   try {
-    const decoded: any = jwt.verify(token, JWT_SECRET);
+    const decoded: any = jwt.verify(token, appConfig.jwtSecret);
     if (decoded.userId) {
       req.userId = decoded.userId;
       next();

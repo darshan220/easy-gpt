@@ -119,4 +119,20 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  ::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #6b72809a;
+    border-radius: 4px;
+    border: 1px solid slategrey;
+  }
 }

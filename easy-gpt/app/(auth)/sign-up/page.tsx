@@ -48,49 +48,63 @@ export default function SignUp() {
       >
         <h2 className="text-2xl text-white mb-6 text-center">Sign Up</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="relative">
-            <input
-              {...register("name")}
-              className="w-full bg-transparent border-b border-gray-500 focus:outline-none focus:border-blue-500 text-white placeholder-transparent"
-              placeholder="Name"
-            />
-            <label className="absolute left-0 text-gray-400 text-sm pointer-events-none transition-all duration-300">
-              Name
-            </label>
-            {errors.name && (
-              <p className="text-red-400 text-xs mt-1">{errors.name.message}</p>
-            )}
+          <div className="flex flex-col">
+            <div>
+              <label className="left-0 text-gray-400 text-sm pointer-events-none transition-all duration-300">
+                Name
+              </label>
+            </div>
+            <div>
+              <input
+                {...register("name")}
+                className="w-full bg-transparent border-b border-gray-500 focus:outline-none focus:border-blue-500 text-white placeholder-transparent"
+                placeholder="Name"
+              />
+              {errors.name && (
+                <p className="text-red-400 text-xs mt-1">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
           </div>
-          <div className="relative">
-            <input
-              {...register("email")}
-              className="w-full bg-transparent border-b border-gray-500 focus:outline-none focus:border-blue-500 text-white placeholder-transparent"
-              placeholder="Email"
-            />
-            <label className="absolute left-0 text-gray-400 text-sm pointer-events-none transition-all duration-300">
-              Email
-            </label>
-            {errors.email && (
-              <p className="text-red-400 text-xs mt-1">
-                {errors.email.message}
-              </p>
-            )}
+          <div>
+            <div>
+              <label className="left-0 text-gray-400 text-sm pointer-events-none transition-all duration-300">
+                Email
+              </label>
+            </div>
+            <div>
+              <input
+                {...register("email")}
+                className="w-full bg-transparent border-b border-gray-500 focus:outline-none focus:border-blue-500 text-white placeholder-transparent"
+                placeholder="Email"
+              />
+              {errors.email && (
+                <p className="text-red-400 text-xs mt-1">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
           </div>
-          <div className="relative">
-            <input
-              type="password"
-              {...register("password")}
-              className="w-full bg-transparent border-b border-gray-500 focus:outline-none focus:border-blue-500 text-white placeholder-transparent"
-              placeholder="Password"
-            />
-            <label className="absolute left-0 text-gray-400 text-sm pointer-events-none transition-all duration-300">
-              Password
-            </label>
-            {errors.password && (
-              <p className="text-red-400 text-xs mt-1">
-                {errors.password.message}
-              </p>
-            )}
+          <div>
+            <div>
+              <label className="left-0 text-gray-400 text-sm pointer-events-none transition-all duration-300">
+                Password
+              </label>
+            </div>
+            <div>
+              <input
+                type="password"
+                {...register("password")}
+                className="w-full bg-transparent border-b border-gray-500 focus:outline-none focus:border-blue-500 text-white placeholder-transparent"
+                placeholder="Password"
+              />
+              {errors.password && (
+                <p className="text-red-400 text-xs mt-1">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
           </div>
           <button
             disabled={loading}

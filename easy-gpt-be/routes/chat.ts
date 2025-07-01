@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { GROQ_API_KEY, GROQ_API_URL } from "../config/openaiConfig";
+import { appConfig } from "../config/app.config";
 
 router.post("/get-response", async (req: any, res: any) => {
   const { messages } = req.body;
@@ -12,10 +12,10 @@ router.post("/get-response", async (req: any, res: any) => {
   }
 
   try {
-    const groqResponse = await fetch(GROQ_API_URL ?? "" , {
+    const groqResponse = await fetch(appConfig.groqConfig.apiUrl ?? "", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${GROQ_API_KEY}`,
+        Authorization: `Bearer ${appConfig.groqConfig.apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

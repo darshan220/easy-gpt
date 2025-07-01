@@ -1,8 +1,8 @@
 import { Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
-import { JWT_SECRET } from "../config/openaiConfig";
 import { clearAuthCookie, setAuthCookie } from "../utils/cookieUtils";
+import { appConfig } from "../config/app.config";
 const prisma = new PrismaClient();
 const router = Router();
 
@@ -34,7 +34,7 @@ router.post("/signup", async (req: any, res: any) => {
       },
     });
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
+    const token = jwt.sign({ userId: user.id }, appConfig.jwtSecret, {
       expiresIn: "24h",
     });
     console.log(token,"tokendddadadadada");
@@ -50,7 +50,6 @@ router.post("/signup", async (req: any, res: any) => {
 router.post("/login", async (req: any, res: any) => {
   const { email, password } = req.body;
 
-  // Input validation
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required" });
   }
@@ -64,10 +63,9 @@ router.post("/login", async (req: any, res: any) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
+    const token = jwt.sign({ userId: user.id }, appConfig.jwtSecret, {
       expiresIn: "24h",
     });
-    console.log(token,"token");
     setAuthCookie(res, token);
     const { password: _, ...userWithoutPassword } = user;
     res.json({ user: userWithoutPassword, token });
@@ -79,14 +77,12 @@ router.post("/login", async (req: any, res: any) => {
 
 router.get("/me", async (req: any, res: any) => {
   const token = req.cookies.access_token;
-  console.log(req.cookies,"reqreqreq");
-  console.log(token);
   if (!token) {
     return res.status(401).json({ error: "No token provided" });
   }
 
   try {
-    const decoded: any = jwt.verify(token, JWT_SECRET);
+    const decoded: any = jwt.verify(token, appConfig.jwtSecret);
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
       select: {

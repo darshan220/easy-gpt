@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { config } from "dotenv";
 import cookieParser from "cookie-parser";
+import { appConfig } from "./config/app.config";
 
 // Load environment variables
 config();
@@ -11,7 +12,7 @@ app.use(cookieParser());
 
 // CORS configuration
 const corsOptions = {
-  origin: ["http://localhost:3000", "http://localhost:3001"],
+  origin: [appConfig.corsOrigin],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -55,7 +56,6 @@ app.use((err: any, req: any, res: any, next: any) => {
 //   }
 // });
 
-const PORT = 3080;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(appConfig.port, () => {
+  console.log(`Server is running on port ${appConfig.port}`);
 });

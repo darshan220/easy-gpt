@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import Head from "next/head";
 import { Message } from "@/types/type";
 import ChatHeader from "@/components/ChatHeader/ChatHeader";
 import ChatWindow from "@/components/ChatWindow/ChatWindow";
 import ChatInput from "@/components/ChatInput/ChatInput";
 import Sidebar from "@/components/Sidebar/Sidebar";
+import { useAuth } from "@/components/Auth/AuthContext";
 import axios from "axios";
 
 const MainPage: React.FC = () => {
@@ -19,10 +19,11 @@ const MainPage: React.FC = () => {
   ]);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [streamingMessage, setStreamingMessage] = useState<string>("");
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [chats, setChats] = useState<{ id: number; title: string }[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
   const chatWindowRef = useRef<HTMLDivElement>(null);
+  const { logout } = useAuth();
 
   // Load chat history from localStorage on component mount
   useEffect(() => {
@@ -51,18 +52,6 @@ const MainPage: React.FC = () => {
     }
   }, [messages, isTyping, streamingMessage]);
 
-  // Theme toggle
-  useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [theme]);
-
-  const handleToggleTheme = () =>
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
-
   // Chat management
   useEffect(() => {
     const savedChats = localStorage.getItem("chatList");
@@ -90,6 +79,14 @@ const MainPage: React.FC = () => {
     // For now, just clear messages
     setMessages([]);
     localStorage.removeItem("chatHistory");
+  };
+
+  const handleToggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   const handleSendMessage = async (message: string): Promise<void> => {
@@ -183,41 +180,44 @@ const MainPage: React.FC = () => {
   };
 
   return (
-    <div
-      className={`min-h-screen flex flex-row ${
-        theme === "dark" ? "bg-gray-950" : "bg-gray-50"
-      }`}
-    >
-      <Head>
-        <title>ChatGPT Clone</title>
-        <meta
-          name="description"
-          content="A ChatGPT clone built with Next.js and Tailwind CSS"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <div>
-        <Sidebar
-          chats={chats}
-          onNewChat={handleNewChat}
-          onSelectChat={handleSelectChat}
-          selectedChatId={selectedChatId}
-          theme={theme}
-        />
-      </div>
-      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
-        <ChatHeader
-          onClearChat={clearChat}
-          onToggleTheme={handleToggleTheme}
-          theme={theme}
-        />
-        <ChatWindow
-          ref={chatWindowRef}
-          messages={messages}
-          isTyping={isTyping}
-          streamingMessage={streamingMessage}
-        />
-        <ChatInput onSendMessage={handleSendMessage} disabled={isTyping} />
+    <div className="flex h-screen bg-gray-800 text-gray-100">
+      <Sidebar
+        chats={chats}
+        onNewChat={handleNewChat}
+        onSelectChat={handleSelectChat}
+        selectedChatId={selectedChatId}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={handleToggleSidebar}
+        onLogout={handleLogout}
+      />
+      
+      <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+        {/* Glass effect overlay */}
+        <div className="relative z-10 flex flex-col h-full">
+          <ChatHeader
+            onClearChat={() => {
+              setMessages([]);
+              localStorage.removeItem("chatHistory");
+            }}
+            onLogout={handleLogout}
+          />
+          
+          <div className="flex-1 overflow-x-auto">
+            <ChatWindow
+              messages={messages}
+              isTyping={isTyping}
+              streamingMessage={streamingMessage}
+              ref={chatWindowRef}
+            />
+          </div>
+          
+          <div className="bg-gray-900/50 backdrop-blur-sm">
+            <ChatInput 
+              onSendMessage={handleSendMessage} 
+              isTyping={isTyping} 
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

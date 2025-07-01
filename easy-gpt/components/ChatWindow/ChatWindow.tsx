@@ -7,7 +7,7 @@ import TypingIndicator from "../TypingIndicator/TypingIndicator";
 const ChatWindow = forwardRef<HTMLDivElement, ChatWindowProps>(
   ({ messages, isTyping, streamingMessage }, ref) => {
     return (
-      <div ref={ref} className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+      <div ref={ref} className="flex-1 overflow-y-auto px-4 py-2 space-y-6">
         {messages.length === 0 && !isTyping && (
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">

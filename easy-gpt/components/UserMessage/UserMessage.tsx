@@ -7,7 +7,8 @@ const UserMessage: React.FC<MessageProps> = ({ message }) => {
         <div className="bg-blue-500 text-white rounded-2xl rounded-br-md px-4 py-2">
           <p className="text-sm">{message.content}</p>
         </div>
-        <div className="flex items-center justify-end mt-1 space-x-1">
+        {/* User timestamp details */}
+        {/* <div className="flex items-center justify-end mt-1 space-x-1">
           <span className="text-xs text-gray-500">{message.timestamp}</span>
           <svg
             className="w-4 h-4 text-blue-500"
@@ -20,7 +21,7 @@ const UserMessage: React.FC<MessageProps> = ({ message }) => {
               clipRule="evenodd"
             />
           </svg>
-        </div>
+        </div> */}
       </div>
     </div>
   );
