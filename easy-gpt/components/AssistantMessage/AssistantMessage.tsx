@@ -10,17 +10,26 @@ const AssistantMessage: React.FC<MessageProps> = ({ message }) => {
     }
   };
 
-  // Simple markdown rendering for bold text
   const renderMarkdown = (text: string): string => {
     const lines = text.split("\n");
-
+  
     let isInCodeBlock = false;
     let html = "";
-    const inList = false;
-
+  
+    const escapeHtml = (str: string) =>
+      str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  
+    const processInline = (line: string) => {
+      // Replace **bold**
+      line = line.replace(/\*\*(.+?)\*\*/g, `<strong>$1</strong>`);
+      // Replace `inline code`
+      line = line.replace(/`([^`]+?)`/g, `<code class="inline-code">$1</code>`);
+      return line;
+    };
+  
     for (const line of lines) {
       const trimmed = line.trim();
-
+  
       // Code block (triple backticks)
       if (/^```/.test(trimmed)) {
         if (isInCodeBlock) {
@@ -32,58 +41,67 @@ const AssistantMessage: React.FC<MessageProps> = ({ message }) => {
         }
         continue;
       }
-
+  
       if (isInCodeBlock) {
-        html += `${line}\n`;
+        html += `${escapeHtml(line)}\n`;
         continue;
       }
-
+  
       // ✅ Tip box
       if (/^✅\s*/.test(trimmed)) {
-        html += `<div class="tip-box">✅ ${trimmed.replace(
-          /^✅\s*/,
-          ""
+        html += `<div class="tip-box">✅ ${processInline(
+          trimmed.replace(/^✅\s*/, "")
         )}</div>`;
         continue;
       }
-
+  
       // ### Heading
       if (trimmed.startsWith("###")) {
-        html += `<h3 class="assistant-heading">${trimmed.replace(
-          /^###\s*/,
-          ""
+        html += `<h3 class="assistant-heading">${processInline(
+          trimmed.replace(/^###\s*/, "")
         )}</h3>`;
         continue;
       }
-
-      // Bullet list with bold title (`- **Title**: rest`)
+  
+      // - **Title**: rest (custom bullet with bold title)
       const bulletMatch = trimmed.match(/^- \*\*(.+?)\*\*:\s*(.+)/);
       if (bulletMatch) {
         const title = bulletMatch[1];
         const content = bulletMatch[2];
-        html += `<ul><li class="assistant-paragraph"><h4 class="assistant-subheading">${title}</h4>${content}</li></ul>`;
+        html += `<ul><li class="assistant-paragraph"><h4 class="assistant-subheading">${processInline(
+          title
+        )}</h4>${processInline(content)}</li></ul>`;
         continue;
       }
-
+  
+      // * Bullet point (basic bullet starting with *)
+      if (/^\*\s+/.test(trimmed)) {
+        const bulletContent = trimmed.replace(/^\*\s+/, "");
+        html += `<ul><li class="assistant-paragraph">${processInline(
+          bulletContent
+        )}</li></ul>`;
+        continue;
+      }
+  
       // One-line code snippet or logic line
       if (/^(\s{2,}|\/\/|const |let |function |return )/.test(trimmed)) {
-        html += `<pre class="code-block"><code>${line}</code></pre>`;
+        html += `<pre class="code-block"><code>${escapeHtml(line)}</code></pre>`;
         continue;
       }
-
+  
       // Normal paragraph
       if (trimmed) {
-        html += `<p class="assistant-paragraph">${line}</p>`;
+        html += `<p class="assistant-paragraph">${processInline(line)}</p>`;
       }
     }
-
-    // Close any open blocks
+  
+    // Close any open code blocks
     if (isInCodeBlock) html += "</code></pre>";
-    if (inList) html += "</ul>";
-
+  
     return html;
   };
-
+  
+  
   return (
     <div className="flex justify-start">
       <div className="max-w-xs lg:max-w-2xl">

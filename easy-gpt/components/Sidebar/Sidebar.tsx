@@ -14,7 +14,6 @@ const Sidebar = ({
   chats,
   onNewChat,
   onSelectChat,
-  selectedChatId,
   isCollapsed,
   onToggleCollapse,
   onLogout,
@@ -38,7 +37,7 @@ const Sidebar = ({
         )}
         <button
           onClick={onToggleCollapse}
-          className={`p-2 rounded-md hover:bg-gray-800 transition-colors ${
+          className={`cursor-pointer p-2 rounded-md hover:bg-gray-800 transition-colors ${
             !isCollapsed ? "ml-2" : ""
           }`}
         >

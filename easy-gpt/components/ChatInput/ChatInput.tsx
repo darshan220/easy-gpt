@@ -1,8 +1,18 @@
 import { useState, FormEvent, KeyboardEvent, ChangeEvent } from "react";
 import { Plus, SendHorizonal } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => Promise<void>;
+  onModelChange: (modelId: string) => void;
+  selectedModel: string;
+  availableModels: Array<{ id: string; object: string; created: number; owned_by: string }>;
   disabled?: boolean;
   isTyping?: boolean;
 }
@@ -17,6 +27,9 @@ const TOOL_OPTIONS = [
 
 const ChatInput: React.FC<ChatInputProps> = ({
   onSendMessage,
+  onModelChange,
+  selectedModel,
+  availableModels,
   disabled,
   isTyping = false,
 }) => {
@@ -50,6 +63,24 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <div className="w-full p-4 bg-gray-800">
+      <div className="flex items-center gap-2 mb-2">
+        <Select value={selectedModel} onValueChange={onModelChange}>
+          <SelectTrigger className="w-64 bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600">
+            <SelectValue placeholder="Select a model" />
+          </SelectTrigger>
+          <SelectContent className="bg-gray-800 border border-gray-600 rounded-md shadow-lg">
+            {availableModels.map((model) => (
+              <SelectItem 
+                key={model.id} 
+                value={model.id}
+                className="text-sm text-gray-200 hover:bg-gray-700 px-3 py-2 cursor-pointer"
+              >
+                {model.id}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
       <form onSubmit={handleSubmit} className="relative flex items-center">
         {/* Tools button */}
         <button

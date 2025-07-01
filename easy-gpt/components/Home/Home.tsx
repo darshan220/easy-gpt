@@ -7,8 +7,12 @@ import ChatInput from "@/components/ChatInput/ChatInput";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import { useAuth } from "@/components/Auth/AuthContext";
 import axios from "axios";
+import { useGetGroqModels } from "@/hooks/useGetGroqModels";
 
 const MainPage: React.FC = () => {
+  const { logout } = useAuth();
+  const { models, fetchModels } = useGetGroqModels();
+  const [selectedModel, setSelectedModel] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([
     {
       id: Date.now(),
@@ -23,8 +27,7 @@ const MainPage: React.FC = () => {
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
   const chatWindowRef = useRef<HTMLDivElement>(null);
-  const { logout } = useAuth();
-
+  
   // Load chat history from localStorage on component mount
   useEffect(() => {
     const savedMessages = localStorage.getItem("chatHistory");
@@ -36,6 +39,17 @@ const MainPage: React.FC = () => {
         console.error("Error loading chat history:", error);
       }
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchModels();
+      // Set the first model as default if available
+      if (models.length > 0) {
+        setSelectedModel(prev => prev || models[0].id);
+      }
+    };
+    fetchData();
   }, []);
 
   // Save messages to localStorage whenever messages change
@@ -90,7 +104,7 @@ const MainPage: React.FC = () => {
   };
 
   const handleSendMessage = async (message: string): Promise<void> => {
-    if (!message.trim()) return;
+    if (!message.trim() || !selectedModel) return;
 
     const userMessage: Message = {
       id: Date.now(),
@@ -98,7 +112,7 @@ const MainPage: React.FC = () => {
       sender: "user",
       timestamp: new Date().toLocaleTimeString(),
     };
-    console.log(messages)
+    
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
 
@@ -107,6 +121,7 @@ const MainPage: React.FC = () => {
         "http://localhost:3080/chat/get-response",
         {
           messages: [{ role: "user", content: message }],
+          model: selectedModel,
         },
         {
           headers: {
@@ -122,6 +137,7 @@ const MainPage: React.FC = () => {
         content: assistantContent,
         sender: "assistant",
         timestamp: new Date().toLocaleTimeString(),
+        model: selectedModel, // Store which model was used for this response
       };
 
       setStreamingMessage(assistantMessage.content);
@@ -131,52 +147,6 @@ const MainPage: React.FC = () => {
     } finally {
       setIsTyping(false);
     }
-  };
-
-  // const simulateStreamingResponse = async (
-  //   userMessage: string
-  // ): Promise<void> => {
-  //   // Simulate different responses based on user input
-  //   let response =
-  //     "I'm Claude, an AI assistant. I understand you're testing this chat interface. ";
-
-  //   if (userMessage.toLowerCase().includes("hello")) {
-  //     response = "Hello! It's great to meet you. How can I help you today? ";
-  //   } else if (userMessage.toLowerCase().includes("help")) {
-  //     response =
-  //       "I'm here to help! You can ask me questions about various topics, and I'll do my best to provide helpful and accurate information. ";
-  //   } else if (userMessage.toLowerCase().includes("weather")) {
-  //     response =
-  //       "I don't have access to real-time weather data, but I'd recommend checking a reliable weather service for current conditions in your area. ";
-  //   }
-
-  //   response +=
-  //     "This is a demo of streaming responses where text appears gradually, just like ChatGPT!";
-
-  //   setStreamingMessage("");
-  //   const words = response.split(" ");
-
-  //   for (let i = 0; i < words.length; i++) {
-  //     await new Promise<void>((resolve) => setTimeout(resolve, 50)); // Simulate streaming delay
-  //     setStreamingMessage((prev) => prev + (i === 0 ? "" : " ") + words[i]);
-  //   }
-
-  //   // Add complete assistant message
-  //   const assistantMessage: Message = {
-  //     id: Date.now() + 1,
-  //     content: response,
-  //     sender: "assistant",
-  //     timestamp: new Date().toLocaleTimeString(),
-  //   };
-
-  //   setMessages((prev) => [...prev, assistantMessage]);
-  //   setStreamingMessage("");
-  //   setIsTyping(false);
-  // };
-
-  const clearChat = (): void => {
-    setMessages([]);
-    localStorage.removeItem("chatHistory");
   };
 
   return (
@@ -212,7 +182,13 @@ const MainPage: React.FC = () => {
           </div>
 
           <div className="bg-gray-900/50 backdrop-blur-sm mx-48">
-            <ChatInput onSendMessage={handleSendMessage} isTyping={isTyping} />
+            <ChatInput 
+              onSendMessage={handleSendMessage} 
+              isTyping={isTyping} 
+              selectedModel={selectedModel}
+              onModelChange={setSelectedModel}
+              availableModels={models}
+            />
           </div>
         </div>
       </div>

@@ -86,6 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         method: "POST",
         credentials: "include",
       });
+      await fetchUser();
     } catch (error) {
       console.error("Error during logout:", error);
     } finally {

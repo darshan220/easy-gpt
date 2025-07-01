@@ -7,6 +7,7 @@ export interface Message {
   sender: 'user' | 'assistant';
   timestamp: string;
   streaming?: boolean;
+  model?: string;
 }
 
 export interface ChatHeaderProps {
