@@ -24,7 +24,7 @@ const ChatWindow = forwardRef<HTMLDivElement, ChatWindowProps>(
               </svg>
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Welcome to ChatGPT Assistant
+              Welcome to Slam AI Assistant
             </h3>
             <p className="text-gray-500">
               Start a conversation by typing a message below.

@@ -79,7 +79,7 @@ const Sidebar = ({
       </nav>
 
       {/* User and Settings */}
-      <div className="p-3 border-t border-r border-gray-700">
+      <div className="p-3">
         <div className="flex items-center justify-between p-2 rounded-md hover:bg-gray-800 transition-colors cursor-pointer">
           <div className="flex items-center">
             <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">

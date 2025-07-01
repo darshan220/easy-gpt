@@ -190,7 +190,7 @@ const MainPage: React.FC = () => {
         onToggleCollapse={handleToggleSidebar}
         onLogout={handleLogout}
       />
-      
+
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* Glass effect overlay */}
         <div className="relative z-10 flex flex-col h-full">
@@ -201,8 +201,8 @@ const MainPage: React.FC = () => {
             }}
             onLogout={handleLogout}
           />
-          
-          <div className="flex-1 overflow-x-auto">
+
+          <div className="flex-1 overflow-x-auto mx-48">
             <ChatWindow
               messages={messages}
               isTyping={isTyping}
@@ -210,12 +210,9 @@ const MainPage: React.FC = () => {
               ref={chatWindowRef}
             />
           </div>
-          
-          <div className="bg-gray-900/50 backdrop-blur-sm">
-            <ChatInput 
-              onSendMessage={handleSendMessage} 
-              isTyping={isTyping} 
-            />
+
+          <div className="bg-gray-900/50 backdrop-blur-sm mx-48">
+            <ChatInput onSendMessage={handleSendMessage} isTyping={isTyping} />
           </div>
         </div>
       </div>

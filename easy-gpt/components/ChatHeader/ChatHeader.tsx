@@ -17,7 +17,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
 
         <div>
           <h1 className="text-lg font-semibold text-white">
-            ChatGPT
+            Slam AI
           </h1>
         </div>
 
