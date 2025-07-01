@@ -1,5 +1,4 @@
 import { MessageProps } from "@/types/type";
-import { Bot } from "lucide-react";
 import "./assistantMessage.css";
 
 const AssistantMessage: React.FC<MessageProps> = ({ message }) => {
@@ -89,9 +88,10 @@ const AssistantMessage: React.FC<MessageProps> = ({ message }) => {
     <div className="flex justify-start">
       <div className="max-w-xs lg:max-w-2xl">
         <div className="flex items-start space-x-3">
-          <div className="w-8 rounded-full flex items-center justify-center flex-shrink-0">
+          {/* Bot icon */}
+          {/* <div className="w-8 rounded-full flex items-center justify-center flex-shrink-0">
             <Bot />
-          </div>
+          </div> */}
 
           <div className="text-white px-4 py-2 flex-1">
             <div

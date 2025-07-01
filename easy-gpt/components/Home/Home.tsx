@@ -12,7 +12,7 @@ const MainPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: Date.now(),
-      content: "Hello! I'm Claude, an AI assistant. How can I help you today?",
+      content: "Hello! I'm your AI assistant. How can I help you today?",
       sender: "assistant",
       timestamp: new Date().toLocaleTimeString(),
     },
@@ -98,7 +98,7 @@ const MainPage: React.FC = () => {
       sender: "user",
       timestamp: new Date().toLocaleTimeString(),
     };
-
+    console.log(messages)
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
 
