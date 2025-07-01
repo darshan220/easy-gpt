@@ -5,7 +5,8 @@ import { ChatWindowProps, Message } from "@/types/type";
 import TypingIndicator from "../TypingIndicator/TypingIndicator";
 
 const ChatWindow = forwardRef<HTMLDivElement, ChatWindowProps>(
-  ({ messages, isTyping, streamingMessage }, ref) => {
+  ({ messages, isTyping }, ref) => {
+
     return (
       <div ref={ref} className="flex-1 overflow-y-auto px-4 py-2 space-y-6">
         {messages.length === 0 && !isTyping && (
@@ -43,17 +44,6 @@ const ChatWindow = forwardRef<HTMLDivElement, ChatWindowProps>(
         {isTyping && (
           <>
             <TypingIndicator />
-            {streamingMessage && (
-              <AssistantMessage
-                message={{
-                  id: Date.now(),
-                  content: streamingMessage,
-                  sender: "assistant",
-                  timestamp: "",
-                  streaming: true,
-                }}
-              />
-            )}
           </>
         )}
       </div>

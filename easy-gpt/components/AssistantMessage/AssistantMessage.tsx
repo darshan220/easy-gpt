@@ -1,6 +1,8 @@
 import { MessageProps } from "@/types/type";
 import { Bot } from "lucide-react";
 import "./assistantMessage.css";
+import { TypewriterEffect } from "../TypeWritter/TypeWritter";
+// import { useEffect, useState } from "react";
 
 const AssistantMessage: React.FC<MessageProps> = ({ message }) => {
   const copyToClipboard = async (): Promise<void> => {
@@ -12,77 +14,91 @@ const AssistantMessage: React.FC<MessageProps> = ({ message }) => {
   };
 
   // Simple markdown rendering for bold text
-  const renderMarkdown = (text: string): string => {
+  const renderMarkdown = (text: string) => {
     const lines = text.split("\n");
-
+    const blocks = [];
     let isInCodeBlock = false;
-    let html = "";
-    const inList = false;
+    let currentCodeLines: string[] = [];
+
+    let blockCount = 0; // stable counter for unique keys
 
     for (const line of lines) {
       const trimmed = line.trim();
 
-      // Code block (triple backticks)
       if (/^```/.test(trimmed)) {
         if (isInCodeBlock) {
-          html += `</code></pre>`;
+          blocks.push({
+            id: `code-${blockCount++}`,
+            tag: "pre",
+            text: currentCodeLines.join("\n"),
+            className: "code-block",
+          });
+          currentCodeLines = [];
           isInCodeBlock = false;
         } else {
           isInCodeBlock = true;
-          html += `<pre class="code-block"><code>`;
+          currentCodeLines = [];
         }
         continue;
       }
 
       if (isInCodeBlock) {
-        html += `${line}\n`;
+        currentCodeLines.push(line);
         continue;
       }
 
-      // ✅ Tip box
-      if (/^✅\s*/.test(trimmed)) {
-        html += `<div class="tip-box">✅ ${trimmed.replace(
-          /^✅\s*/,
-          ""
-        )}</div>`;
+      if (/^###\s*/.test(trimmed)) {
+        blocks.push({
+          id: `h3-${blockCount++}`,
+          tag: "h3",
+          text: trimmed.replace(/^###\s*/, ""),
+          className: "assistant-heading",
+        });
         continue;
       }
 
-      // ### Heading
-      if (trimmed.startsWith("###")) {
-        html += `<h3 class="assistant-heading">${trimmed.replace(
-          /^###\s*/,
-          ""
-        )}</h3>`;
-        continue;
-      }
-
-      // Bullet list with bold title (`- **Title**: rest`)
       const bulletMatch = trimmed.match(/^- \*\*(.+?)\*\*:\s*(.+)/);
       if (bulletMatch) {
-        const title = bulletMatch[1];
-        const content = bulletMatch[2];
-        html += `<ul><li class="assistant-paragraph"><h4 class="assistant-subheading">${title}</h4>${content}</li></ul>`;
+        blocks.push({
+          id: `li-${blockCount++}`,
+          tag: "li",
+          text: `${bulletMatch[1]}: ${bulletMatch[2]}`,
+          className: "assistant-paragraph",
+        });
         continue;
       }
 
-      // One-line code snippet or logic line
+      if (/^✅\s*/.test(trimmed)) {
+        blocks.push({
+          id: `tip-${blockCount++}`,
+          tag: "div",
+          text: `✅ ${trimmed.replace(/^✅\s*/, "")}`,
+          className: "tip-box",
+        });
+        continue;
+      }
+
       if (/^(\s{2,}|\/\/|const |let |function |return )/.test(trimmed)) {
-        html += `<pre class="code-block"><code>${line}</code></pre>`;
+        blocks.push({
+          id: `inlinecode-${blockCount++}`,
+          tag: "pre",
+          text: line,
+          className: "code-block",
+        });
         continue;
       }
 
-      // Normal paragraph
       if (trimmed) {
-        html += `<p class="assistant-paragraph">${line}</p>`;
+        blocks.push({
+          id: `p-${blockCount++}`,
+          tag: "p",
+          text: trimmed,
+          className: "assistant-paragraph",
+        });
       }
     }
 
-    // Close any open blocks
-    if (isInCodeBlock) html += "</code></pre>";
-    if (inList) html += "</ul>";
-
-    return html;
+    return blocks;
   };
 
   return (
@@ -94,11 +110,9 @@ const AssistantMessage: React.FC<MessageProps> = ({ message }) => {
           </div>
 
           <div className="text-white px-4 py-2 flex-1">
-            <div
-              className="text-sm"
-              dangerouslySetInnerHTML={{
-                __html: renderMarkdown(message?.content ?? ""),
-              }}
+            <TypewriterEffect
+              blocks={renderMarkdown(message.content)}
+              speed={30}
             />
             {message.streaming && (
               <span className="inline-block w-2 h-4 bg-gray-400 ml-1 animate-pulse" />
