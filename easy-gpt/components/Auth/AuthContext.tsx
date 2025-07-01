@@ -51,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Error fetching user:", error);
       setError("Failed to fetch user data");
       setUser(null);
+      setLoading(false);
       throw error;
     } finally {
       setLoading(false);
@@ -67,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           router.push("/");
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
         // If not authenticated and not on auth page, redirect to login
         if (!isAuthPage) {
           router.push("/sign-in");
