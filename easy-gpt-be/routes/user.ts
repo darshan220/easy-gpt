@@ -37,7 +37,6 @@ router.post("/signup", async (req: any, res: any) => {
     const token = jwt.sign({ userId: user.id }, appConfig.jwtSecret, {
       expiresIn: "24h",
     });
-    console.log(token,"tokendddadadadada");
     setAuthCookie(res, token);
     const { password: _, ...userWithoutPassword } = user;
     res.status(201).json({ user: userWithoutPassword, token });

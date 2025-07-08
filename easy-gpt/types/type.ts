@@ -30,3 +30,10 @@ export interface ChatInputProps {
   onSendMessage: (message: string) => void;
   disabled: boolean;
 }
+
+export interface Chat {
+  id: string;
+  title: string;
+  createdAt: string;
+}
+  

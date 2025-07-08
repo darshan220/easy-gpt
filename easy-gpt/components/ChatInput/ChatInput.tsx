@@ -69,7 +69,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
             <SelectValue placeholder="Select a model" />
           </SelectTrigger>
           <SelectContent className="bg-gray-800 border border-gray-600 rounded-md shadow-lg">
-            {availableModels.map((model) => (
+            {availableModels?.map((model) => (
               <SelectItem 
                 key={model.id} 
                 value={model.id}

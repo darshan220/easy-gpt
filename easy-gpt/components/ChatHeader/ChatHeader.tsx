@@ -13,7 +13,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onClearChat, onLogout }) => {
     <header className="sticky top-0 z-10 bg-gray-800">
       <div className="flex justify-between px-4 py-3">
         <div>
-          <h1 className="text-lg font-semibold text-white">Slam AI</h1>
+          <h1 className="text-lg font-semibold text-white">easy.ai</h1>
         </div>
 
         <div className="flex items-center space-x-2">
