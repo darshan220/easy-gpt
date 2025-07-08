@@ -43,7 +43,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onClearChat, onLogout }) => {
 
           <button
             onClick={onLogout}
-            className="px-3 py-1.5 text-sm bg-gray-800 hover:bg-gray-700 text-gray-200 rounded-md transition-colors"
+            className="cursor-pointer px-3 py-1.5 text-sm bg-gray-800 hover:bg-gray-700 text-gray-200 rounded-md transition-colors"
           >
             Logout
           </button>

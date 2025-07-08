@@ -27,7 +27,7 @@ const MainPage: React.FC = () => {
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
   const chatWindowRef = useRef<HTMLDivElement>(null);
-  
+
   // Load chat history from localStorage on component mount
   useEffect(() => {
     const savedMessages = localStorage.getItem("chatHistory");
@@ -44,13 +44,15 @@ const MainPage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       await fetchModels();
-      // Set the first model as default if available
-      if (models.length > 0) {
-        setSelectedModel(prev => prev || models[0].id);
-      }
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (models.length > 0) {
+      setSelectedModel((prev) => prev || models[0].id);
+    }
+  }, [models]);
 
   // Save messages to localStorage whenever messages change
   useEffect(() => {
@@ -112,7 +114,7 @@ const MainPage: React.FC = () => {
       sender: "user",
       timestamp: new Date().toLocaleTimeString(),
     };
-    
+
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
 
@@ -182,9 +184,9 @@ const MainPage: React.FC = () => {
           </div>
 
           <div className="bg-gray-900/50 backdrop-blur-sm mx-48">
-            <ChatInput 
-              onSendMessage={handleSendMessage} 
-              isTyping={isTyping} 
+            <ChatInput
+              onSendMessage={handleSendMessage}
+              isTyping={isTyping}
               selectedModel={selectedModel}
               onModelChange={setSelectedModel}
               availableModels={models}

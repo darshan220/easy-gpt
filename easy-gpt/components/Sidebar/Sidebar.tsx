@@ -58,9 +58,9 @@ const Sidebar = ({
             {!isCollapsed ? "No recent chats" : <MessageSquare />}
           </div>
         ) : (
-          <ul className="space-y-1">
+          <>
             {chats.map((chat) => (
-              <li key={chat.id}>
+              <div key={chat.id}>
                 <button
                   onClick={() => onSelectChat(chat.id)}
                   className={`mx-[10px] max-w-[230px] rounded-2xl w-full text-left p-3 text-sm flex items-center truncate cursor-pointer text-gray-300 hover:bg-gray-800`}
@@ -71,9 +71,9 @@ const Sidebar = ({
                     <span className="truncate">{chat.title}</span>
                   )}
                 </button>
-              </li>
+              </div>
             ))}
-          </ul>
+          </>
         )}
       </nav>
 

@@ -34,6 +34,7 @@ router.post("/get-response", async (req: any, res: any) => {
     }
 
     const data = await groqResponse.json();
+    //TODO:- pass only data 
     res.json({ data: data.choices[0].message.content });
   } catch (err: any) {
     console.error("Groq API error:", err);

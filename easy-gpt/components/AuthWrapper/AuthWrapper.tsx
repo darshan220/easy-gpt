@@ -9,14 +9,12 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading) {
-      if (isAuth) {
-        router.push("/");
-      } else {
-        router.push("/sign-in");
-      }
+    if (isAuth) {
+      router.push("/");
+    } else {
+      router.push("/sign-in");
     }
-  }, [isAuth, loading, router]);
+  }, [isAuth]);
 
   if (loading) {
     return (
